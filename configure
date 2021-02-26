@@ -3,29 +3,36 @@ set -euo pipefail
 
 date +"%c -- configure"
 
+echo "$# arguments"
 while true
 do
     if [ "$#" -eq 0 ]; then break; fi
     case "$1" in
         --srcdir=*)
             SRCDIR="$(echo "$1" | sed -e 's/--srcdir=//')"
+            echo "srcdir=$SRCDIR"
             shift
             ;;
         --srcdir)
             SRCDIR="$2"
+            echo "srcdir is $SRCDIR"
             shift 2
             ;;
         --)
+            echo "argument: $1"
             shift
-            break
             ;;
         *)
-            echo "Not implemented: $1" >&2
-            exit 1
+            echo "argument: $1"
+            shift
             ;;
     esac
 done
 
-cp -v "${SRCDIR}"/Makefile .
+if [ -n "${SRCDIR:-}" ]; then
+    cp -v "${SRCDIR}"/Makefile .;
+else
+    echo "in tree build";
+fi
 
 echo "done."
